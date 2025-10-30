@@ -1,7 +1,13 @@
 from rest_framework import serializers
-from .models import Todo
+from .models import Product, Order
 
-class TodoSerializer(serializers.ModelSerializer):
+class ProductSerializer(serializers.ModelSerializer):
     class Meta:
-        model = Todo
+        model = Product
+        fields = '__all__'
+
+
+class OrderSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Order
         fields = '__all__'

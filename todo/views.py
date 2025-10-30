@@ -1,50 +1,96 @@
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
-from .models import Todo
-from .serializers import TodoSerializer
+from .models import Product, Order
+from .serializers import ProductSerializer, OrderSerializer
 
 # Create your views here.
-class TodoListCreateAPIView(APIView):
+class ProductListCreateAPIView(APIView):
     def get(self, request):
-        todos = Todo.objects.all()
-        serializer = TodoSerializer(todos, many=True)
+        products = Product.objects.all()
+        serializer = ProductSerializer(products, many=True)
         return Response(serializer.data)
 
     def post(self, request):
-        serializer = TodoSerializer(data=request.data)
+        serializer = ProductSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-class TodoDetailAPIView(APIView):
+class ProductDetailAPIView(APIView):
     def get_object(self, pk):
         try:
-            return Todo.objects.get(pk=pk)
-        except Todo.DoesNotExist:
+            return Product.objects.get(pk=pk)
+        except Product.DoesNotExist:
             return None
 
     def get(self, request, pk):
-        todo = self.get_object(pk)
-        if todo is None:
+        product = self.get_object(pk)
+        if product is None:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        serializer = TodoSerializer(todo)
+        serializer = ProductSerializer(product)
         return Response(serializer.data)
 
     def put(self, request, pk):
-        todo = self.get_object(pk)
-        if todo is None:
+        product = self.get_object(pk)
+        if product is None:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        serializer = TodoSerializer(todo, data=request.data)
+        serializer = ProductSerializer(product, data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def delete(self, request, pk):
-        todo = self.get_object(pk)
-        if todo is None:
+        product = self.get_object(pk)
+        if product is None:
             return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
-        todo.delete()
+        product.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+class OrderListCreateAPIView(APIView):
+    def get(self, request):
+        orders = Order.objects.all()
+        serializer = OrderSerializer(orders, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        serializer = OrderSerializer(data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class OrderDetailAPIView(APIView):
+    def get_object(self, pk):
+        try:
+            return Order.objects.get(pk=pk)
+        except Order.DoesNotExist:
+            return None
+
+    def get(self, request, pk):
+        order = self.get_object(pk)
+        if order is None:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data)
+
+    def put(self, request, pk):
+        order = self.get_object(pk)
+        if order is None:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        serializer = OrderSerializer(order, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, pk):
+        order = self.get_object(pk)
+        if order is None:
+            return Response({"detail": "Not found."}, status=status.HTTP_404_NOT_FOUND)
+        order.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)
